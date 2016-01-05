@@ -30,12 +30,14 @@ type UI struct {
 }
 
 type Options struct {
-	// Default is the value when no thing is innputted
+	// Default is the value when no thing is innputted.
 	Default string
 
-	// Loop continues to asking user to input until
-	// he/she provides valid value.
+	// Loop continues to asking user to input until getting valid input.
 	Loop bool
+
+	// Required returns error when input is empty.
+	Required bool
 
 	// Hide hides user input is prompting console.
 	Hide bool
@@ -43,12 +45,11 @@ type Options struct {
 
 func (i *UI) Ask(query string, opts *Options) (string, error) {
 
-	wr := i.Writer
+	// Set the default writer & reader if not provided
+	wr, rd := i.Writer, i.Reader
 	if wr == nil {
 		wr = defaultWriter
 	}
-
-	rd := i.Reader
 	if rd == nil {
 		rd = defaultReader
 	}
@@ -118,16 +119,16 @@ func (i *UI) Ask(query string, opts *Options) (string, error) {
 
 func (i *UI) Select(query string, list []string, opts *Options) (string, error) {
 
-	wr := i.Writer
+	// Set the default writer & reader if not provided
+	wr, rd := i.Writer, i.Reader
 	if wr == nil {
 		wr = defaultWriter
 	}
-
-	rd := i.Reader
 	if rd == nil {
 		rd = defaultReader
 	}
 
+	// Find default index which opts.Default indicates
 	defaultIndex := -1
 	defaultVal := opts.Default
 	if defaultVal != "" {
@@ -151,9 +152,9 @@ func (i *UI) Select(query string, list []string, opts *Options) (string, error) 
 	for i, item := range list {
 		buf.WriteString(fmt.Sprintf("%d. %s\n", i+1, item))
 	}
-	buf.WriteString("\n")
 
-	// Prompt the message
+	// Prompt the query
+	buf.WriteString("\n")
 	fmt.Fprintf(wr, buf.String())
 
 	resultCh := make(chan string, 1)
