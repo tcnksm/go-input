@@ -21,8 +21,8 @@ var (
 
 // UI
 type UI struct {
-	// Writer is where output is written. For example query
-	// to the user will be written. By default, it's os.Stdout.
+	// Writer is where output is written. For example a query
+	// to the user will be written here. By default, it's os.Stdout.
 	Writer io.Writer
 
 	// Reader is source of input. By default, it's os.Stdin.
@@ -30,7 +30,7 @@ type UI struct {
 }
 
 type Options struct {
-	// Default is the value when no thing is innputted.
+	// Default is the default value when no thing is input.
 	Default string
 
 	// Loop continues to asking user to input until getting valid input.
@@ -206,7 +206,7 @@ func (i *UI) Select(query string, list []string, opts *Options) (string, error) 
 					continue
 				case ErrOutOfRange:
 					fmt.Fprintf(wr,
-						"%q is not a valid choice. Choose from 1 to %d.\n\n",
+						"%q is not a valid choice. Choose a number from 1 to %d.\n\n",
 						line, len(list))
 					continue
 				default:
