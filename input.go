@@ -7,7 +7,6 @@ package input
 
 import (
 	"bytes"
-	"errors"
 	"fmt"
 	"io"
 	"os"
@@ -34,7 +33,87 @@ type Options struct {
 	// Default is the value when no thing is innputted
 	Default string
 
+	// Loop continues to asking user to input until
+	// he/she provides valid value.
 	Loop bool
+
+	// Hide hides user input is prompting console.
+	Hide bool
+}
+
+func (i *UI) Ask(query string, opts *Options) (string, error) {
+
+	wr := i.Writer
+	if wr == nil {
+		wr = defaultWriter
+	}
+
+	rd := i.Reader
+	if rd == nil {
+		rd = defaultReader
+	}
+
+	// Construct the query to the user
+	var buf bytes.Buffer
+	buf.WriteString(fmt.Sprintf("%s\n", query))
+	fmt.Fprintf(wr, buf.String())
+
+	resultCh := make(chan string, 1)
+	errCh := make(chan error, 1)
+	go func() {
+		// Loop only when error by invalid user input and opts.Loop is true.
+		for {
+			// Construct the asking line to input
+			var buf bytes.Buffer
+			buf.WriteString("Enter a value")
+
+			// Add default val if provided
+			if opts.Default != "" {
+				buf.WriteString(fmt.Sprintf(" (Default is %s)", opts.Default))
+			}
+
+			buf.WriteString(": ")
+			fmt.Fprintf(wr, buf.String())
+
+			// Read user input from reader.
+			var line string
+			if _, err := fmt.Fscanln(rd, &line); err != nil {
+				// Handle error if it's not `unexpected newline`
+				if err.Error() != "unexpected newline" {
+					errCh <- fmt.Errorf("failed to read the input: %s", err)
+					break
+				}
+			}
+
+			// Use default value if provided
+			if line == "" && opts.Default != "" {
+				resultCh <- opts.Default
+				return
+			}
+
+			resultCh <- line
+			return
+		}
+	}()
+
+	sigCh := make(chan os.Signal, 1)
+	signal.Notify(sigCh, os.Interrupt)
+	defer signal.Stop(sigCh)
+
+	select {
+	case result := <-resultCh:
+		// Insert the new line for next output
+		fmt.Fprintf(wr, "\n")
+		return result, nil
+	case err := <-errCh:
+		// Insert the new line for next output
+		fmt.Fprintf(wr, "\n")
+		return "", err
+	case <-sigCh:
+		// Insert the new line for next output
+		fmt.Fprintf(wr, "\n")
+		return "", ErrInterrupted
+	}
 }
 
 func (i *UI) Select(query string, list []string, opts *Options) (string, error) {
@@ -111,20 +190,20 @@ func (i *UI) Select(query string, list []string, opts *Options) (string, error) 
 				// Don't loop and just return error if Loop is false
 				if !opts.Loop {
 					errCh <- err
-					break
+					return
 				}
 
 				// Check error and if it's possible to ask again to user
 				// then provide appropriate message and run loop again
 				switch err {
-				case ErrorEmpty:
+				case ErrEmpty:
 					fmt.Fprintf(wr, "Input must not be empty. Answer by a number.\n\n")
 					continue
-				case ErrorNotNumber:
+				case ErrNotNumber:
 					fmt.Fprintf(wr,
 						"%q is not a valid input. Answer by a number.\n\n", line)
 					continue
-				case ErrorOutOfRange:
+				case ErrOutOfRange:
 					fmt.Fprintf(wr,
 						"%q is not a valid choice. Choose from 1 to %d.\n\n",
 						line, len(list))
@@ -133,12 +212,12 @@ func (i *UI) Select(query string, list []string, opts *Options) (string, error) 
 					// If other error is returned, it means asking again is
 					// impossible
 					errCh <- err
-					break
+					return
 				}
 			}
 
 			resultCh <- result
-			break
+			return
 		}
 	}()
 
@@ -158,7 +237,7 @@ func (i *UI) Select(query string, list []string, opts *Options) (string, error) 
 	case <-sigCh:
 		// Insert the new line for next output
 		fmt.Fprintf(wr, "\n")
-		return "", errors.New("interrupted")
+		return "", ErrInterrupted
 	}
 }
 
@@ -170,18 +249,18 @@ func execSelect(list []string, input string, defaultIndex int) (string, error) {
 		if defaultIndex >= 0 {
 			return list[defaultIndex], nil
 		}
-		return "", ErrorEmpty
+		return "", ErrEmpty
 	}
 
 	// Convert user input string to int val
 	n, err := strconv.Atoi(input)
 	if err != nil {
-		return "", ErrorNotNumber
+		return "", ErrNotNumber
 	}
 
 	// Check answer is in range of list
 	if n < 1 || len(list) < n {
-		return "", ErrorOutOfRange
+		return "", ErrOutOfRange
 	}
 
 	return list[n-1], nil

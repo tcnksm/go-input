@@ -1,11 +1,9 @@
 go-input
 ====
 
-[![GitHub release](http://img.shields.io/github/release/tcnksm/go-input.svg?style=flat-square)][release]
 [![MIT License](http://img.shields.io/badge/license-MIT-blue.svg?style=flat-square)][license]
 [![Go Documentation](http://img.shields.io/badge/go-documentation-blue.svg?style=flat-square)][godocs]
 
-[release]: https://github.com/tcnksm/go-input/releases
 [license]: https://github.com/tcnksm/go-input/blob/master/LICENSE
 [godocs]: http://godoc.org/github.com/tcnksm/go-input
 
@@ -14,16 +12,13 @@ go-input
 
 ## Install
 
-To install, use `go get`:
+Use `go get` to install this package:
 
 ```bash
-$ go get -d github.com/tcnksm/go-input
+$ go get github.com/tcnksm/go-input
 ```
 
 ## Usage
-
-## VS.
-
 
 
 ## Contribution

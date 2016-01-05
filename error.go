@@ -3,7 +3,8 @@ package input
 import "errors"
 
 var (
-	ErrorEmpty      = errors.New("default value is not provided but input is empty")
-	ErrorNotNumber  = errors.New("input must be number")
-	ErrorOutOfRange = errors.New("input is out of range")
+	ErrInterrupted = errors.New("interrupted")
+	ErrEmpty       = errors.New("default value is not provided but input is empty")
+	ErrNotNumber   = errors.New("input must be number")
+	ErrOutOfRange  = errors.New("input is out of range")
 )

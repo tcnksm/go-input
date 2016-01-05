@@ -7,6 +7,44 @@ import (
 	"testing"
 )
 
+func TestAsk(t *testing.T) {
+	cases := []struct {
+		opts      *Options
+		userInput io.Reader
+		expect    string
+	}{
+		{
+			opts:      &Options{},
+			userInput: bytes.NewBufferString("Taichi\n"),
+			expect:    "Taichi",
+		},
+
+		{
+			opts: &Options{
+				Default: "Nakashima",
+			},
+			userInput: bytes.NewBufferString("\n"),
+			expect:    "Nakashima",
+		},
+	}
+
+	for i, c := range cases {
+		ui := &UI{
+			Writer: ioutil.Discard,
+			Reader: c.userInput,
+		}
+
+		ans, err := ui.Ask("", c.opts)
+		if err != nil {
+			t.Fatalf("#%d expect not to occurr error: %s", i, err)
+		}
+
+		if ans != c.expect {
+			t.Fatalf("#%d expect %q to be eq %q", i, ans, c.expect)
+		}
+	}
+}
+
 func TestSelect(t *testing.T) {
 	cases := []struct {
 		list      []string
@@ -126,7 +164,7 @@ func TestExecSelect(t *testing.T) {
 			input:        "",
 			defaultIndex: -1,
 			expect:       "",
-			err:          ErrorEmpty,
+			err:          ErrEmpty,
 		},
 
 		{
@@ -134,7 +172,7 @@ func TestExecSelect(t *testing.T) {
 			input:        "A",
 			defaultIndex: -1,
 			expect:       "",
-			err:          ErrorNotNumber,
+			err:          ErrNotNumber,
 		},
 
 		{
@@ -142,7 +180,7 @@ func TestExecSelect(t *testing.T) {
 			input:        "80",
 			defaultIndex: -1,
 			expect:       "",
-			err:          ErrorOutOfRange,
+			err:          ErrOutOfRange,
 		},
 	}
 
