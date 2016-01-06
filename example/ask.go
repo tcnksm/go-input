@@ -16,7 +16,8 @@ func main() {
 	query := "What is your name?"
 	name, err := ui.Ask(query, &input.Options{
 		// Read the default val from env var
-		Default: os.Getenv("NAME"),
+		Default:  os.Getenv("NAME"),
+		Required: true,
 	})
 	if err != nil {
 		log.Fatal(err)
