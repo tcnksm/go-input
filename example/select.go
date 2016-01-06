@@ -14,7 +14,7 @@ func main() {
 	}
 
 	query := "Which language do you prefer to use?"
-	ans, err := ui.Select(query, []string{"go", "Go", "golang"}, &input.Options{
+	lang, err := ui.Select(query, []string{"go", "Go", "golang"}, &input.Options{
 		Default: "Go",
 		Loop:    true,
 	})
@@ -22,5 +22,5 @@ func main() {
 		log.Fatal(err)
 	}
 
-	log.Printf("Answer is %s\n", ans)
+	log.Printf("Answer is %s\n", lang)
 }
