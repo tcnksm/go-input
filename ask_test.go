@@ -26,6 +26,16 @@ func TestAsk(t *testing.T) {
 			userInput: bytes.NewBufferString("\n"),
 			expect:    "Nakashima",
 		},
+
+		// Loop & Required
+		{
+			opts: &Options{
+				Required: true,
+				Loop:     true,
+			},
+			userInput: bytes.NewBufferString("\nNakashima\n"),
+			expect:    "Nakashima",
+		},
 	}
 
 	for i, c := range cases {

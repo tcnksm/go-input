@@ -7,6 +7,9 @@ import (
 	"os/signal"
 )
 
+// Ask asks user to input an answer about query. It shows query to user
+// and ask input. It returns answer as string. If it catches the SIGINT
+// stops reading user input and returns error.
 func (i *UI) Ask(query string, opts *Options) (string, error) {
 
 	// Set the default writer & reader if not provided
@@ -18,13 +21,22 @@ func (i *UI) Ask(query string, opts *Options) (string, error) {
 		rd = defaultReader
 	}
 
-	// Construct the query to the user
+	// Construct the query to the user and show it.
 	var buf bytes.Buffer
 	buf.WriteString(fmt.Sprintf("%s\n", query))
 	fmt.Fprintf(wr, buf.String())
 
+	// resultCh is channel receives result string from user input.
 	resultCh := make(chan string, 1)
+
+	// errCh is channel receives error while reading user input.
 	errCh := make(chan error, 1)
+
+	// sigCh is channel which is watch Interruptted signal (SIGINT)
+	sigCh := make(chan os.Signal, 1)
+	signal.Notify(sigCh, os.Interrupt)
+	defer signal.Stop(sigCh)
+
 	go func() {
 		// Loop only when error by invalid user input and opts.Loop is true.
 		for {
@@ -56,14 +68,20 @@ func (i *UI) Ask(query string, opts *Options) (string, error) {
 				return
 			}
 
+			if line == "" && opts.Required {
+				if !opts.Loop {
+					errCh <- ErrEmpty
+					return
+				}
+
+				fmt.Fprintf(wr, "Input must not be empty.\n\n")
+				continue
+			}
+
 			resultCh <- line
 			return
 		}
 	}()
-
-	sigCh := make(chan os.Signal, 1)
-	signal.Notify(sigCh, os.Interrupt)
-	defer signal.Stop(sigCh)
 
 	select {
 	case result := <-resultCh:
