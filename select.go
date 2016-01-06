@@ -48,8 +48,17 @@ func (i *UI) Select(query string, list []string, opts *Options) (string, error) 
 	buf.WriteString("\n")
 	fmt.Fprintf(wr, buf.String())
 
+	// resultCh is channel receives result string from user input.
 	resultCh := make(chan string, 1)
+
+	// errCh is channel receives error while reading user input.
 	errCh := make(chan error, 1)
+
+	// sigCh is channel which is watch Interruptted signal (SIGINT)
+	sigCh := make(chan os.Signal, 1)
+	signal.Notify(sigCh, os.Interrupt)
+	defer signal.Stop(sigCh)
+
 	go func() {
 		// Loop only when error by invalid user input and opts.Loop is true.
 		for {
@@ -112,10 +121,6 @@ func (i *UI) Select(query string, list []string, opts *Options) (string, error) 
 			return
 		}
 	}()
-
-	sigCh := make(chan os.Signal, 1)
-	signal.Notify(sigCh, os.Interrupt)
-	defer signal.Stop(sigCh)
 
 	select {
 	case result := <-resultCh:
