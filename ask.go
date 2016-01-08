@@ -54,12 +54,34 @@ func (i *UI) Ask(query string, opts *Options) (string, error) {
 
 			// Read user input from reader.
 			var line string
-			if _, err := fmt.Fscanln(rd, &line); err != nil {
-				// Handle error if it's not `unexpected newline`
-				if err.Error() != "unexpected newline" {
-					errCh <- fmt.Errorf("failed to read the input: %s", err)
-					break
+			if opts.Hide || opts.Mask {
+
+				raw := &Raw{
+					Writer: wr,
+					Mask:   opts.Mask,
 				}
+
+				f, ok := rd.(*os.File)
+				if !ok {
+					errCh <- fmt.Errorf("reader must be a file")
+					return
+				}
+
+				var err error
+				line, err = raw.Read(f)
+				if err != nil {
+					errCh <- err
+					return
+				}
+			} else {
+				if _, err := fmt.Fscanln(rd, &line); err != nil {
+					// Handle error if it's not `unexpected newline`
+					if err.Error() != "unexpected newline" {
+						errCh <- fmt.Errorf("failed to read the input: %s", err)
+						return
+					}
+				}
+
 			}
 
 			// Use default value if provided

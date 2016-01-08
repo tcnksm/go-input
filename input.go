@@ -40,4 +40,8 @@ type Options struct {
 
 	// Hide hides user input is prompting console.
 	Hide bool
+
+	// Mask hides user input and will be matched by asterisks
+	// on the screen.
+	Mask bool
 }
