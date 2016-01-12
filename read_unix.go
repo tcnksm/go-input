@@ -2,21 +2,27 @@
 package input
 
 import (
+	"fmt"
 	"os"
 
 	"golang.org/x/crypto/ssh/terminal"
 )
 
-// RawRead reads file with raw mode (without prompting to terminal).
-func (rw *Raw) Read(f *os.File) (string, error) {
+// rawRead reads file with raw mode (without prompting to terminal).
+func (i *UI) rawRead(f *os.File) (string, error) {
+
 	// MakeRaw put the terminal connected to the given file descriptor
 	// into raw mode
 	fd := int(f.Fd())
+	if !terminal.IsTerminal(fd) {
+		return "", fmt.Errorf("file descriptor %d is not a terminal", fd)
+	}
+
 	oldState, err := terminal.MakeRaw(fd)
 	if err != nil {
 		return "", err
 	}
 	defer terminal.Restore(fd, oldState)
 
-	return rw.readline(f)
+	return i.rawReadline(f)
 }
