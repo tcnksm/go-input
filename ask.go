@@ -7,9 +7,9 @@ import (
 	"os/signal"
 )
 
-// Ask asks user to input an answer about query. It shows query to user
-// and ask input. It returns answer as string. If it catches the SIGINT
-// stops reading user input and returns error.
+// Ask asks user to input an answer about a query. It shows the query
+// to user and ask input. It returns answer as string. If it catches
+// the SIGINT, then stops reading user input and returns error.
 func (i *UI) Ask(query string, opts *Options) (string, error) {
 
 	// Set the default writer & reader if not provided
@@ -97,6 +97,17 @@ func (i *UI) Ask(query string, opts *Options) (string, error) {
 				}
 
 				fmt.Fprintf(wr, "Input must not be empty.\n\n")
+				continue
+			}
+
+			validate := opts.validateFunc()
+			if err := validate(line); err != nil {
+				if !opts.Loop {
+					errCh <- err
+					return
+				}
+
+				fmt.Fprintf(wr, "Failed to validate input: %s\n\n", err)
 				continue
 			}
 

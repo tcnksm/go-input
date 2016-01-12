@@ -32,7 +32,8 @@ type Options struct {
 	// Default is the default value when no thing is input.
 	Default string
 
-	// Loop continues to asking user to input until getting valid input.
+	// Loop continues to asking user to input until getting
+	// valid input.
 	Loop bool
 
 	// Required returns error when input is empty.
@@ -41,7 +42,29 @@ type Options struct {
 	// Hide hides user input is prompting console.
 	Hide bool
 
-	// Mask hides user input and will be matched by asterisks
+	// Mask hides user input and will be matched by asterisks(*)
 	// on the screen.
 	Mask bool
+
+	// ValidateFunc is function to validate user input string.
+	// By default, it does nothing.
+	ValidateFunc ValidateFunc
+}
+
+// ValidateFunc is function to validate user input
+type ValidateFunc func(string) error
+
+// validateFunc returns ValidateFunc. If it's specifed by
+// user it returns it. If not returns default function.
+func (o *Options) validateFunc() ValidateFunc {
+	if o.ValidateFunc == nil {
+		return defaultValidateFunc
+	}
+
+	return o.ValidateFunc
+}
+
+// defaultValidateFunc does nothing
+func defaultValidateFunc(input string) error {
+	return nil
 }
