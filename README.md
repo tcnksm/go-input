@@ -7,7 +7,11 @@ go-input
 [license]: https://github.com/tcnksm/go-input/blob/master/LICENSE
 [godocs]: http://godoc.org/github.com/tcnksm/go-input
 
-`go-input` is a Go package for reading user input in console. 
+`go-input` is a Go package for reading user input in console.
+
+Here is the some good points compared with other/similar packages. It can handle `SIGINT` (`Ctrl+C`) while reading input and returns error. It allows to change `Writer` and `Reader` (So it's easy to test of your go program with this package). It also supports raw mode input (reading input without prompting) for multiple platform (Darwin, Linux and Windows). 
+
+The documentation is on [GoDoc][godocs].
 
 ## Install
 
