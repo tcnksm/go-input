@@ -2,6 +2,18 @@
 go-input is package to interact with user input from command line interface.
 
 http://github.com/tcnksm/go-input
+
+  ui := &input.UI{
+      Writer: os.Stdout,
+      Reader: os.Stdin,
+  }
+
+  query := "What is your name?"
+  name, err := ui.Ask(query, &input.Options{
+      Default: "tcnksm",
+      Required: true,
+	  Loop:     true,
+  })
 */
 package input
 
