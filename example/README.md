@@ -2,16 +2,23 @@
 
 This directory contains examples to use `go-input`.
 
-
-### Ask
+To run simplest asking,
 
 ```bash
 $ go run ask.go
 What is your name?
-Enter a value:
+Enter a value: tcnksm
 ```
 
-### Select
+To ask password (which you don't want to prompt user input),
+
+```bash
+$ go run password.go
+What is your password?
+Enter a value: *******
+```
+
+To ask selecting from list, 
 
 ```bash
 $ go run select.go

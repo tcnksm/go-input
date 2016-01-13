@@ -8,6 +8,7 @@ import (
 )
 
 func main() {
+
 	ui := &input.UI{}
 
 	query := "What is your name?"
