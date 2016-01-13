@@ -8,16 +8,14 @@ import (
 )
 
 func main() {
-	ui := &input.UI{
-		Writer: os.Stdout,
-		Reader: os.Stdin,
-	}
+	ui := &input.UI{}
 
 	query := "What is your name?"
 	name, err := ui.Ask(query, &input.Options{
 		// Read the default val from env var
 		Default:  os.Getenv("NAME"),
 		Required: true,
+		Loop:     true,
 	})
 	if err != nil {
 		log.Fatal(err)
