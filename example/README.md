@@ -1,32 +1,11 @@
-# Example of go-input
+# Examples of go-input
 
-This directory contains examples to use `go-input`.
+This directory contains examples to use `go-input`. Each file has `main()` function, so run each.
 
-To run simplest asking,
-
-```bash
-$ go run ask.go
-What is your name?
-Enter a value: tcnksm
-```
-
-To ask password (which you don't want to prompt user input),
+For example, if you want to run `password.go`,
 
 ```bash
 $ go run password.go
 What is your password?
 Enter a value: *******
-```
-
-To ask selecting from list, 
-
-```bash
-$ go run select.go
-Which language do you prefer to use?
-
-1. go
-2. Go
-3. golang
-
-Enter a number (Default is 2):
 ```
