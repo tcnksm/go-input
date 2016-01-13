@@ -7,8 +7,7 @@ go-input
 [license]: https://github.com/tcnksm/go-input/blob/master/LICENSE
 [godocs]: http://godoc.org/github.com/tcnksm/go-input
 
-
-`go-input` is a package to handle user input from command line interface. 
+`go-input` is a Go package for reading user input in console. 
 
 ## Install
 
@@ -20,6 +19,23 @@ $ go get github.com/tcnksm/go-input
 
 ## Usage
 
+The following is the simple example,
+
+```golang
+ui := &input.UI{
+    Writer: os.Stdout,
+    Reader: os.Stdin,
+}
+
+query := "What is your name?"
+name, err := ui.Ask(query, &input.Options{
+    Default: "tcnksm",
+    Required: true,
+	Loop:     true,
+})
+```
+
+You can check other examples in [here](/example).
 
 ## Contribution
 
