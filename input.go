@@ -6,6 +6,7 @@ http://github.com/tcnksm/go-input
 package input
 
 import (
+	"errors"
 	"io"
 	"os"
 	"sync"
@@ -17,7 +18,16 @@ var (
 	defaultWriter = os.Stdout
 	defaultReader = os.Stdin
 
+	// defualtMaskVal is default mask val for read
 	defaultMaskVal = "*"
+)
+
+var (
+	// Errs are error retunrned by input functions.
+	// It's useful for handling error from outside of this function.
+	ErrEmpty      = errors.New("default value is not provided but input is empty")
+	ErrNotNumber  = errors.New("input must be number")
+	ErrOutOfRange = errors.New("input is out of range")
 )
 
 // UI
