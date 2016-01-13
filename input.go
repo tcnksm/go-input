@@ -8,6 +8,7 @@ package input
 import (
 	"io"
 	"os"
+	"sync"
 )
 
 var (
@@ -15,6 +16,8 @@ var (
 	// and UI.Reader.
 	defaultWriter = os.Stdout
 	defaultReader = os.Stdin
+
+	defaultMaskVal = "*"
 )
 
 // UI
@@ -25,6 +28,24 @@ type UI struct {
 
 	// Reader is source of input. By default, it's os.Stdin.
 	Reader io.Reader
+
+	// mask is option for read function
+	mask    bool
+	maskVal string
+
+	once sync.Once
+}
+
+// setDefault sets the default value for UI struct.
+func (i *UI) setDefault() {
+	// Set the default writer & reader if not provided
+	if i.Writer == nil {
+		i.Writer = defaultWriter
+	}
+
+	if i.Reader == nil {
+		i.Reader = defaultReader
+	}
 }
 
 // Options
@@ -42,12 +63,16 @@ type Options struct {
 	// Hide hides user input is prompting console.
 	Hide bool
 
-	// Mask hides user input and will be matched by asterisks(*)
-	// on the screen.
+	// Mask hides user input and will be matched by MaskVal
+	// on the screen. By default, MaskVal is astarisk (*).
 	Mask bool
 
-	// ValidateFunc is function to validate user input string.
-	// By default, it does nothing.
+	// MaskVal is a value which is used for masking user input.
+	// By default, MaskVal is astarisk (*).
+	MaskVal string
+
+	// ValidateFunc is function to do extra validation of user
+	// input string. By default, it does nothing (just returns nil).
 	ValidateFunc ValidateFunc
 }
 
@@ -64,7 +89,35 @@ func (o *Options) validateFunc() ValidateFunc {
 	return o.ValidateFunc
 }
 
-// defaultValidateFunc does nothing
+// defaultValidateFunc is default ValidateFunc which does
+// nothing.
 func defaultValidateFunc(input string) error {
 	return nil
+}
+
+// maskOpts returns maskOptions from given the Options.
+func (o *Options) readOpts() *readOptions {
+	var mask bool
+	var maskVal string
+
+	// Hide input and prompt nothing on screen.
+	if o.Hide {
+		mask = true
+	}
+
+	// Mask input and prompt default maskVal.
+	if o.Mask {
+		mask = true
+		maskVal = defaultMaskVal
+	}
+
+	// Mask input and prompt custom maskVal.
+	if o.MaskVal != "" {
+		maskVal = o.MaskVal
+	}
+
+	return &readOptions{
+		mask:    mask,
+		maskVal: maskVal,
+	}
 }

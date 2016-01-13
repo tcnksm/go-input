@@ -3,131 +3,73 @@ package input
 import (
 	"bytes"
 	"fmt"
-	"os"
-	"os/signal"
 )
 
-// Ask asks user to input an answer about a query. It shows the query
-// to user and ask input. It returns answer as string. If it catches
-// the SIGINT, then stops reading user input and returns error.
+// Ask
 func (i *UI) Ask(query string, opts *Options) (string, error) {
+	i.once.Do(i.setDefault)
 
-	// Set the default writer & reader if not provided
-	wr, rd := i.Writer, i.Reader
-	if wr == nil {
-		wr = defaultWriter
-	}
-	if rd == nil {
-		rd = defaultReader
-	}
+	// Display the query to the user.
+	fmt.Fprintf(i.Writer, "%s\n", query)
 
-	// Construct the query to the user and show it.
-	var buf bytes.Buffer
-	buf.WriteString(fmt.Sprintf("%s\n", query))
-	fmt.Fprintf(wr, buf.String())
+	// resultStr and resultErr are return val of this function
+	var resultStr string
+	var resultErr error
+	for {
 
-	// resultCh is channel receives result string from user input.
-	resultCh := make(chan string, 1)
-
-	// errCh is channel receives error while reading user input.
-	errCh := make(chan error, 1)
-
-	// sigCh is channel which is watch Interruptted signal (SIGINT)
-	sigCh := make(chan os.Signal, 1)
-	signal.Notify(sigCh, os.Interrupt)
-	defer signal.Stop(sigCh)
-
-	go func() {
-		// Loop only when error by invalid user input and opts.Loop is true.
-		for {
-			// Construct the asking line to input
-			var buf bytes.Buffer
-			buf.WriteString("Enter a value")
-
-			// Add default val if provided
-			if opts.Default != "" {
-				buf.WriteString(fmt.Sprintf(" (Default is %s)", opts.Default))
-			}
-
-			buf.WriteString(": ")
-			fmt.Fprintf(wr, buf.String())
-
-			// Read user input from reader.
-			var line string
-			if opts.Hide || opts.Mask {
-
-				raw := &Raw{
-					Writer: wr,
-					Mask:   opts.Mask,
-				}
-
-				f, ok := rd.(*os.File)
-				if !ok {
-					errCh <- fmt.Errorf("reader must be a file")
-					return
-				}
-
-				var err error
-				line, err = raw.Read(f)
-				if err != nil {
-					errCh <- err
-					return
-				}
-			} else {
-				if _, err := fmt.Fscanln(rd, &line); err != nil {
-					// Handle error if it's not `unexpected newline`
-					if err.Error() != "unexpected newline" {
-						errCh <- fmt.Errorf("failed to read the input: %s", err)
-						return
-					}
-				}
-
-			}
-
-			// Use default value if provided
-			if line == "" && opts.Default != "" {
-				resultCh <- opts.Default
-				return
-			}
-
-			if line == "" && opts.Required {
-				if !opts.Loop {
-					errCh <- ErrEmpty
-					return
-				}
-
-				fmt.Fprintf(wr, "Input must not be empty.\n\n")
-				continue
-			}
-
-			validate := opts.validateFunc()
-			if err := validate(line); err != nil {
-				if !opts.Loop {
-					errCh <- err
-					return
-				}
-
-				fmt.Fprintf(wr, "Failed to validate input: %s\n\n", err)
-				continue
-			}
-
-			resultCh <- line
-			return
+		// Construct the instruction to user.
+		var buf bytes.Buffer
+		buf.WriteString("Enter a value")
+		if opts.Default != "" {
+			buf.WriteString(fmt.Sprintf(" (Default is %s)", opts.Default))
 		}
-	}()
 
-	select {
-	case result := <-resultCh:
-		// Insert the new line for next output
-		fmt.Fprintf(wr, "\n")
-		return result, nil
-	case err := <-errCh:
-		// Insert the new line for next output
-		fmt.Fprintf(wr, "\n")
-		return "", err
-	case <-sigCh:
-		// Insert the new line for next output
-		fmt.Fprintf(wr, "\n")
-		return "", ErrInterrupted
+		// Display the instruction to user and ask to input.
+		buf.WriteString(": ")
+		fmt.Fprintf(i.Writer, buf.String())
+
+		// Read user input from UI.Reader.
+		line, err := i.read(opts.readOpts())
+		if err != nil {
+			resultErr = err
+			break
+		}
+
+		// line is empty but default is provided returns it
+		if line == "" && opts.Default != "" {
+			resultStr = opts.Default
+			break
+		}
+
+		if line == "" && opts.Required {
+			if !opts.Loop {
+				resultErr = ErrEmpty
+				break
+			}
+
+			fmt.Fprintf(i.Writer, "Input must not be empty.\n\n")
+			continue
+		}
+
+		// validate input by custom fuction
+		validate := opts.validateFunc()
+		if err := validate(line); err != nil {
+			if !opts.Loop {
+				resultErr = err
+				break
+			}
+
+			fmt.Fprintf(i.Writer, "Failed to validate input string: %s\n\n", err)
+			continue
+		}
+
+		// Reach here means it gets ideal input.
+		resultStr = line
+		break
 	}
+
+	// Insert the new line for next output
+	fmt.Fprintf(i.Writer, "\n")
+
+	return resultStr, resultErr
 }

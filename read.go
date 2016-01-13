@@ -12,13 +12,17 @@ var (
 	ErrInterrupted = errors.New("interrupted")
 )
 
-type maskOptions struct {
+// readOptions is option for read func
+type readOptions struct {
+	// mask hides user input and will be matched by maskVal.
 	mask    bool
 	maskVal string
 }
 
 // read reads input from UI.Reader
-func (i *UI) read(opts *maskOptions) (string, error) {
+func (i *UI) read(opts *readOptions) (string, error) {
+	i.once.Do(i.setDefault)
+
 	// sigCh is channel which is watch Interruptted signal (SIGINT)
 	sigCh := make(chan os.Signal, 1)
 	signal.Notify(sigCh, os.Interrupt)
@@ -31,16 +35,14 @@ func (i *UI) read(opts *maskOptions) (string, error) {
 	go func() {
 		defer close(doneCh)
 
-		if opts.Mask {
+		if opts.mask {
 			f, ok := i.Reader.(*os.File)
 			if !ok {
 				resultErr = fmt.Errorf("reader must be a file")
 				return
 			}
 
-			i.maskWriter = i.Writer
 			i.mask, i.maskVal = opts.mask, opts.maskVal
-
 			resultStr, resultErr = i.rawRead(f)
 		} else {
 			_, err := fmt.Fscanln(i.Reader, &resultStr)
@@ -79,11 +81,12 @@ func (i *UI) rawReadline(f *os.File) (string, error) {
 		}
 
 		if i.mask {
-			fmt.Fprintf(i.maskWriter, i.maskVal)
+			fmt.Fprintf(i.Writer, i.maskVal)
 		}
 
 		resultBuf = append(resultBuf, buf[0])
 	}
 
+	fmt.Fprintf(i.Writer, "\n")
 	return string(resultBuf), nil
 }
