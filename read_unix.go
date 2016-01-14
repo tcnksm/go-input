@@ -1,4 +1,5 @@
 // +build linux darwin freebsd
+
 package input
 
 import (

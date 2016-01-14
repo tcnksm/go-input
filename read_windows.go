@@ -1,4 +1,5 @@
 // +build windows
+
 package input
 
 import (
@@ -6,7 +7,7 @@ import (
 	"syscall"
 )
 
-// Magic constant from MSDN to control whether charactesr read are
+// Magic constant from MSDN to control whether characters read are
 // repeated back on the console.
 //
 // http://msdn.microsoft.com/en-us/library/windows/desktop/ms686033(v=vs.85).aspx
@@ -14,7 +15,7 @@ const ENABLE_ECHO_INPUT = 0x0004
 
 // rawRead reads file with raw mode (without prompting to terminal).
 //
-// For this windows version of rawRead(). I refered the codes on
+// For this windows version of rawRead(). I referred the codes on
 // hashicorp/vault/helper and cloudfoundry/cli/terminal
 func (i *UI) rawRead(f *os.File) (string, error) {
 

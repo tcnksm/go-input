@@ -12,7 +12,7 @@ http://github.com/tcnksm/go-input
   name, err := ui.Ask(query, &input.Options{
       Default: "tcnksm",
       Required: true,
-	  Loop:     true,
+      Loop:     true,
   })
 */
 package input
@@ -35,7 +35,7 @@ var (
 )
 
 var (
-	// Errs are error retunrned by input functions.
+	// Errs are error returned by input functions.
 	// It's useful for handling error from outside of this function.
 	ErrEmpty      = errors.New("default value is not provided but input is empty")
 	ErrNotNumber  = errors.New("input must be number")
@@ -101,7 +101,7 @@ type Options struct {
 // ValidateFunc is function to validate user input
 type ValidateFunc func(string) error
 
-// validateFunc returns ValidateFunc. If it's specifed by
+// validateFunc returns ValidateFunc. If it's specified by
 // user it returns it. If not returns default function.
 func (o *Options) validateFunc() ValidateFunc {
 	if o.ValidateFunc == nil {
@@ -117,7 +117,7 @@ func defaultValidateFunc(input string) error {
 	return nil
 }
 
-// maskOpts returns maskOptions from given the Options.
+// readOpts returns readOptions from given the Options.
 func (o *Options) readOpts() *readOptions {
 	var mask bool
 	var maskVal string

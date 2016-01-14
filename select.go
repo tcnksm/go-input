@@ -26,11 +26,11 @@ func (i *UI) Select(query string, list []string, opts *Options) (string, error) 
 			}
 		}
 
-		// DefaultVal is set but does'nt exist in list
+		// DefaultVal is set but doesn't exist in list
 		if defaultIndex == -1 {
 			// This error message is not for user
 			// Should be found while development
-			return "", fmt.Errorf("opt.Default is specied but item does not exst in list")
+			return "", fmt.Errorf("opt.Default is specified but item does not exist in list")
 		}
 	}
 
@@ -110,7 +110,7 @@ func (i *UI) Select(query string, list []string, opts *Options) (string, error) 
 			continue
 		}
 
-		// validate input by custom fuction
+		// validate input by custom function
 		validate := opts.validateFunc()
 		if err := validate(line); err != nil {
 			if !opts.Loop {
