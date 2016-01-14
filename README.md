@@ -35,7 +35,7 @@ query := "What is your name?"
 name, err := ui.Ask(query, &input.Options{
     Default: "tcnksm",
     Required: true,
-	Loop:     true,
+    Loop:     true,
 })
 ```
 
