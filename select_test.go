@@ -2,6 +2,7 @@ package input
 
 import (
 	"bytes"
+	"fmt"
 	"io"
 	"io/ioutil"
 	"testing"
@@ -109,4 +110,21 @@ func TestSelect_invalidDefault(t *testing.T) {
 	if err == nil {
 		t.Fatal("expect err to be occurr")
 	}
+}
+
+func ExampleUI_Select() {
+	ui := &UI{
+		// In real world, Reader is os.Stdin and input comes
+		// from user actual input.
+		Reader: bytes.NewBufferString("3\n"),
+		Writer: ioutil.Discard,
+	}
+
+	query := "Which language do you prefer to use?"
+	lang, _ := ui.Select(query, []string{"go", "Go", "golang"}, &Options{
+		Default: "Go",
+	})
+
+	fmt.Println(lang)
+	// Output: golang
 }

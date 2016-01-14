@@ -2,6 +2,7 @@ package input
 
 import (
 	"bytes"
+	"fmt"
 	"io"
 	"io/ioutil"
 	"testing"
@@ -53,4 +54,19 @@ func TestAsk(t *testing.T) {
 			t.Fatalf("#%d expect %q to be eq %q", i, ans, c.expect)
 		}
 	}
+}
+
+func ExampleUI_Ask() {
+	ui := &UI{
+		// In real world, Reader is os.Stdin and input comes
+		// from user actual input.
+		Reader: bytes.NewBufferString("tcnksm"),
+		Writer: ioutil.Discard,
+	}
+
+	query := "What is your name?"
+	name, _ := ui.Ask(query, &Options{})
+
+	fmt.Println(name)
+	// Output: tcnksm
 }
