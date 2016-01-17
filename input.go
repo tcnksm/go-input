@@ -1,7 +1,5 @@
 /*
-go-input is package to interact with user input from command line interface.
-
-http://github.com/tcnksm/go-input
+Package input reads user input at the console. http://github.com/tcnksm/go-input
 
   ui := &input.UI{
       Writer: os.Stdout,
@@ -36,13 +34,14 @@ var (
 
 var (
 	// Errs are error returned by input functions.
-	// It's useful for handling error from outside of this function.
-	ErrEmpty      = errors.New("default value is not provided but input is empty")
-	ErrNotNumber  = errors.New("input must be number")
-	ErrOutOfRange = errors.New("input is out of range")
+	// It's useful for handling error from outside of input functions.
+	ErrEmpty       = errors.New("default value is not provided but input is empty")
+	ErrNotNumber   = errors.New("input must be number")
+	ErrOutOfRange  = errors.New("input is out of range")
+	ErrInterrupted = errors.New("interrupted")
 )
 
-// UI
+// UI is user-interface of input and output.
 type UI struct {
 	// Writer is where output is written. For example a query
 	// to the user will be written here. By default, it's os.Stdout.
@@ -70,13 +69,19 @@ func (i *UI) setDefault() {
 	}
 }
 
-// Options
+// ValidateFunc is function to validate the user input.
+//
+// The following example shows validating the user input is
+// 'Y' or 'n' when asking yes or no question.
+type ValidateFunc func(string) error
+
+// Options is structure contains option for input functions.
 type Options struct {
-	// Default is the default value when no thing is input.
+	// Default is the default value which is used when no thing
+	// is input.
 	Default string
 
-	// Loop continues to asking user to input until getting
-	// valid input.
+	// Loop loops asking user to input until getting valid input.
 	Loop bool
 
 	// Required returns error when input is empty.
@@ -86,20 +91,17 @@ type Options struct {
 	Hide bool
 
 	// Mask hides user input and will be matched by MaskVal
-	// on the screen. By default, MaskVal is astarisk (*).
+	// on the screen. By default, MaskVal is astarisk(*).
 	Mask bool
 
 	// MaskVal is a value which is used for masking user input.
-	// By default, MaskVal is astarisk (*).
+	// By default, MaskVal is astarisk(*).
 	MaskVal string
 
 	// ValidateFunc is function to do extra validation of user
 	// input string. By default, it does nothing (just returns nil).
 	ValidateFunc ValidateFunc
 }
-
-// ValidateFunc is function to validate user input
-type ValidateFunc func(string) error
 
 // validateFunc returns ValidateFunc. If it's specified by
 // user it returns it. If not returns default function.

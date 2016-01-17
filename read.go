@@ -1,15 +1,10 @@
 package input
 
 import (
-	"errors"
 	"fmt"
 	"io"
 	"os"
 	"os/signal"
-)
-
-var (
-	ErrInterrupted = errors.New("interrupted")
 )
 
 // readOptions is option for read func
