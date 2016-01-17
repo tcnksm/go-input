@@ -7,6 +7,8 @@ import (
 
 // Ask asks the user for input using the given query. The response is
 // returned as string. Error is returned based on the given option.
+// If Loop is true, it continue to ask until it receives valid input.
+//
 // If the user sends SIGINT (Ctrl+C) while reading input, it catches
 // it and return it as a error.
 func (i *UI) Ask(query string, opts *Options) (string, error) {

@@ -6,7 +6,14 @@ import (
 	"strconv"
 )
 
-// Select
+// Select asks the user to select a item from the given list by the number.
+// It shows the given query and list to user. The response is returned as string
+// from the list. By default, it checks the input is the number and is not
+// out of range of the list and if not returns error. If Loop is true, it continue to
+// ask until it receives valid input.
+//
+// If the user sends SIGINT (Ctrl+C) while reading input, it catches
+// it and return it as a error.
 func (i *UI) Select(query string, list []string, opts *Options) (string, error) {
 	// Set default val
 	i.once.Do(i.setDefault)
