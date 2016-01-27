@@ -25,7 +25,7 @@ func (i *UI) rawRead(f *os.File) (string, error) {
 
 	resetFunc, err := makeRaw(handle)
 	if err != nil {
-		return err
+		return "", err
 	}
 	defer resetFunc()
 
@@ -36,17 +36,17 @@ func makeRaw(console syscall.Handle) (func(), error) {
 
 	// Get old mode so that we can recover later
 	var oldMode uint32
-	if err := syscall.GetConsoleMode(handle, &oldMode); err != nil {
+	if err := syscall.GetConsoleMode(console, &oldMode); err != nil {
 		return nil, err
 	}
 
 	var newMode uint32 = uint32(int(oldMode) & ^ENABLE_ECHO_INPUT)
-	if err := setConsoleMode(handle, newMode); err != nil {
+	if err := setConsoleMode(console, newMode); err != nil {
 		return nil, err
 	}
 
 	return func() {
-		setConsoleMode(handle, oldMode)
+		setConsoleMode(console, oldMode)
 	}, nil
 }
 
