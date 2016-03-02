@@ -61,7 +61,7 @@ func (i *UI) Select(query string, list []string, opts *Options) (string, error) 
 		buf.WriteString("Enter a number")
 
 		// Add default val if provided
-		if defaultIndex >= 0 {
+		if defaultIndex >= 0 && !opts.HideDefault {
 			buf.WriteString(fmt.Sprintf(" (Default is %d)", defaultIndex+1))
 		}
 

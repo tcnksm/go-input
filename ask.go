@@ -15,7 +15,7 @@ func (i *UI) Ask(query string, opts *Options) (string, error) {
 	i.once.Do(i.setDefault)
 
 	// Display the query to the user.
-	fmt.Fprintf(i.Writer, "%s\n", query)
+	fmt.Fprintf(i.Writer, "%s", query)
 
 	// resultStr and resultErr are return val of this function
 	var resultStr string
@@ -24,8 +24,11 @@ func (i *UI) Ask(query string, opts *Options) (string, error) {
 
 		// Construct the instruction to user.
 		var buf bytes.Buffer
-		buf.WriteString("Enter a value")
-		if opts.Default != "" {
+		if !opts.HideOrder {
+			buf.WriteString("\nEnter a value")
+		}
+
+		if opts.Default != "" && !opts.HideDefault {
 			buf.WriteString(fmt.Sprintf(" (Default is %s)", opts.Default))
 		}
 

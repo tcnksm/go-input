@@ -87,6 +87,12 @@ type Options struct {
 	// Required returns error when input is empty.
 	Required bool
 
+	// HideDefault hides default var output.
+	HideDefault bool
+
+	// HideOrder hides order comment ('Enter a value')
+	HideOrder bool
+
 	// Hide hides user input is prompting console.
 	Hide bool
 
