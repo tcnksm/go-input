@@ -20,11 +20,14 @@ func (i *UI) Ask(query string, opts *Options) (string, error) {
 	// resultStr and resultErr are return val of this function
 	var resultStr string
 	var resultErr error
+
+	loopCount := 0
 	for {
+		loopCount++
 
 		// Construct the instruction to user.
 		var buf bytes.Buffer
-		if !opts.HideOrder {
+		if !opts.HideOrder || loopCount > 1 {
 			buf.WriteString("\nEnter a value")
 		}
 
