@@ -5,6 +5,7 @@ import (
 	"io"
 	"os"
 	"os/signal"
+	"strings"
 )
 
 // readOptions is option for read func
@@ -40,10 +41,12 @@ func (i *UI) read(opts *readOptions) (string, error) {
 			i.mask, i.maskVal = opts.mask, opts.maskVal
 			resultStr, resultErr = i.rawRead(f)
 		} else {
-			_, err := fmt.Fscanln(i.Reader, &resultStr)
-			if err != nil && err.Error() != "unexpected newline" {
+			line, err := i.bReader.ReadString('\n')
+			if err != nil && err != io.EOF {
 				resultErr = fmt.Errorf("failed to read the input: %s", err)
 			}
+
+			resultStr = strings.TrimSuffix(line, "\n")
 		}
 	}()
 

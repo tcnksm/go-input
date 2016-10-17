@@ -22,6 +22,15 @@ func TestRead(t *testing.T) {
 			expect:    "passw0rd",
 		},
 
+		{
+			opts: &readOptions{
+				mask:    false,
+				maskVal: "",
+			},
+			userInput: bytes.NewBufferString("taichi nakashima"),
+			expect:    "taichi nakashima",
+		},
+
 		// No good way to test masking...
 	}
 

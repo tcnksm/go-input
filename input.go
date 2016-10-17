@@ -16,6 +16,7 @@ Package input reads user input at the console. http://github.com/tcnksm/go-input
 package input
 
 import (
+	"bufio"
 	"errors"
 	"io"
 	"os"
@@ -54,6 +55,8 @@ type UI struct {
 	mask    bool
 	maskVal string
 
+	bReader *bufio.Reader
+
 	once sync.Once
 }
 
@@ -74,6 +77,10 @@ func (i *UI) setDefault() {
 
 	if i.Reader == nil {
 		i.Reader = defaultReader
+	}
+
+	if i.bReader == nil {
+		i.bReader = bufio.NewReader(i.Reader)
 	}
 }
 
@@ -163,8 +170,7 @@ func (o *Options) readOpts() *readOptions {
 	}
 }
 
-// maskString is used to mask string which should not be displayed
-// directly like auth token
+// maskString is used to mask string which should not be displayed.
 func maskString(s string) string {
 	if len(s) < 3 {
 		return "*******"
