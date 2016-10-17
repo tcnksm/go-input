@@ -108,6 +108,9 @@ type Options struct {
 	// on the screen. By default, MaskVal is astarisk(*).
 	Mask bool
 
+	// MaskDefault hides default value. By default, MaskVal is astarisk(*).
+	MaskDefault bool
+
 	// MaskVal is a value which is used for masking user input.
 	// By default, MaskVal is astarisk(*).
 	MaskVal string
@@ -158,4 +161,14 @@ func (o *Options) readOpts() *readOptions {
 		mask:    mask,
 		maskVal: maskVal,
 	}
+}
+
+// maskString is used to mask string which should not be displayed
+// directly like auth token
+func maskString(s string) string {
+	if len(s) < 3 {
+		return "*******"
+	}
+
+	return s[:3] + "****"
 }

@@ -15,8 +15,9 @@ func main() {
 
 	query := "What is your password?"
 	name, err := ui.Ask(query, &input.Options{
-		Required: true,
-		Mask:     true,
+		Required:    true,
+		Mask:        true,
+		MaskDefault: true,
 	})
 	if err != nil {
 		log.Fatal(err)

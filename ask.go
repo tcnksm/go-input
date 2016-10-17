@@ -32,7 +32,11 @@ func (i *UI) Ask(query string, opts *Options) (string, error) {
 		}
 
 		if opts.Default != "" && !opts.HideDefault {
-			buf.WriteString(fmt.Sprintf(" (Default is %s)", opts.Default))
+			defaultVal := opts.Default
+			if opts.MaskDefault {
+				defaultVal = maskString(defaultVal)
+			}
+			buf.WriteString(fmt.Sprintf(" (Default is %s)", defaultVal))
 		}
 
 		// Display the instruction to user and ask to input.
