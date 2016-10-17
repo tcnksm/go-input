@@ -57,6 +57,14 @@ type UI struct {
 	once sync.Once
 }
 
+// DefaultUI returns default UI. It outputs to stdout and intputs from stdin.
+func DefaultUI() *UI {
+	return &UI{
+		Writer: os.Stdout,
+		Reader: os.Stdin,
+	}
+}
+
 // setDefault sets the default value for UI struct.
 func (i *UI) setDefault() {
 	// Set the default writer & reader if not provided
