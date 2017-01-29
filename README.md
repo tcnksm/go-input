@@ -1,9 +1,5 @@
-go-input
+go-input [![Go Documentation](http://img.shields.io/badge/go-documentation-blue.svg?style=flat-square)][godocs] [![Travis](https://img.shields.io/travis/tcnksm/go-input.svg?style=flat-square)][travis] [![MIT License](http://img.shields.io/badge/license-MIT-blue.svg?style=flat-square)][license]
 ====
-
-[![Go Documentation](http://img.shields.io/badge/go-documentation-blue.svg?style=flat-square)][godocs]
-[![Travis](https://img.shields.io/travis/tcnksm/go-input.svg?style=flat-square)][travis]
-[![MIT License](http://img.shields.io/badge/license-MIT-blue.svg?style=flat-square)][license]
 
 [godocs]: http://godoc.org/github.com/tcnksm/go-input
 [travis]: https://travis-ci.org/tcnksm/go-input
