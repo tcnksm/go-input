@@ -1,24 +1,26 @@
+PACKAGES = $(shell go list ./... | grep -v '/vendor/')
+
 default: test
 
+test-all: vet lint test test-race
+
 test: 
-	go test -v -parallel 5
+	go test -v -parallel=4 ${PACKAGES}
 
 test-race:
-	go test -v -race -parallel 5
-
-test-all: vet lint test cover
+	go test -v -race ${PACKAGES}
 
 vet:
-	@go get golang.org/x/tools/cmd/vet
-	go tool vet .
+	go vet ${PACKAGES}
 
 lint:
 	@go get github.com/golang/lint/golint
-	golint ./...
+	go list ./... | grep -v vendor | xargs golint 
 
-# cover shows test coverages
 cover:
 	@go get golang.org/x/tools/cmd/cover		
 	go test -coverprofile=cover.out
 	go tool cover -html cover.out
 	rm cover.out
+
+.PHONY: test test-race vet lint cover	
