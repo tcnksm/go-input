@@ -7,6 +7,8 @@ import (
 	"syscall"
 )
 
+const LINE_SEP = "\r\n"
+
 // Magic constant from MSDN to control whether characters read are
 // repeated back on the console.
 //
