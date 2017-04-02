@@ -7,6 +7,7 @@ import (
 	"syscall"
 )
 
+// LINE_SEP is the separator for windows or unix systems
 const LINE_SEP = "\r\n"
 
 // Magic constant from MSDN to control whether characters read are
