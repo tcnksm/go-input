@@ -9,8 +9,8 @@ import (
 	"golang.org/x/crypto/ssh/terminal"
 )
 
-// LINE_SEP is the separator for windows or unix systems
-const LINE_SEP = "\n"
+// LineSep is the separator for windows or unix systems
+const LineSep = "\n"
 
 // rawRead reads file with raw mode (without prompting to terminal).
 func (i *UI) rawRead(f *os.File) (string, error) {
