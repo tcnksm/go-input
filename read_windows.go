@@ -7,6 +7,9 @@ import (
 	"syscall"
 )
 
+// LineSep is the separator for windows or unix systems
+const LineSep = "\r\n"
+
 // Magic constant from MSDN to control whether characters read are
 // repeated back on the console.
 //
