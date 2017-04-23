@@ -37,7 +37,7 @@ name, err := ui.Ask(query, &input.Options{
 })
 ```
 
-You can check other examples in [here](https://github.com/tcnksm/go-input/tree/master/_example).
+You can check other examples in [here](/_example).
 
 ## Contribution
 
