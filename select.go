@@ -87,7 +87,7 @@ func (i *UI) Select(query string, list []string, opts *Options) (string, error) 
 				break
 			}
 
-			fmt.Fprintf(i.Writer, "Input must not be empty. Answer by a number.\n\n")
+			fmt.Fprintf(i.Writer, "Input must not be empty. Answer by a number.")
 			continue
 		}
 
@@ -100,7 +100,7 @@ func (i *UI) Select(query string, list []string, opts *Options) (string, error) 
 			}
 
 			fmt.Fprintf(i.Writer,
-				"%q is not a valid input. Answer by a number.\n\n", line)
+				"%q is not a valid input. Answer by a number.", line)
 			continue
 		}
 
@@ -112,7 +112,7 @@ func (i *UI) Select(query string, list []string, opts *Options) (string, error) 
 			}
 
 			fmt.Fprintf(i.Writer,
-				"%q is not a valid choice. Choose a number from 1 to %d.\n\n",
+				"%q is not a valid choice. Choose a number from 1 to %d.",
 				line, len(list))
 			continue
 		}
@@ -125,7 +125,7 @@ func (i *UI) Select(query string, list []string, opts *Options) (string, error) 
 				break
 			}
 
-			fmt.Fprintf(i.Writer, "Failed to validate input string: %s\n\n", err)
+			fmt.Fprintf(i.Writer, "Failed to validate input string: %s", err)
 			continue
 		}
 

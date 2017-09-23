@@ -62,7 +62,7 @@ func (i *UI) Ask(query string, opts *Options) (string, error) {
 				break
 			}
 
-			fmt.Fprintf(i.Writer, "Input must not be empty.\n\n")
+			fmt.Fprintf(i.Writer, "Input must not be empty.")
 			continue
 		}
 
@@ -74,7 +74,7 @@ func (i *UI) Ask(query string, opts *Options) (string, error) {
 				break
 			}
 
-			fmt.Fprintf(i.Writer, "Failed to validate input string: %s\n\n", err)
+			fmt.Fprintf(i.Writer, "Failed to validate input string: %s", err)
 			continue
 		}
 
