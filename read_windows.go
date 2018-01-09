@@ -23,23 +23,16 @@ const ENABLE_ECHO_INPUT = 0x0004
 func (i *UI) rawRead(f *os.File) (string, error) {
 
 	// In windows, Handle can be used to examine or modify the system resource.
+	// https://msdn.microsoft.com/en-us/library/windows/desktop/ms724457(v=vs.85).aspx
+	handle := syscall.Handle(f.Fd())
 
-	// Get the stdin handle
-	// Please see:
-	//   https://golang.org/pkg/syscall/?GOOS=windows#Handle
-	//   https://docs.microsoft.com/en-us/windows/console/getstdhandle
-	stdinHandle, stdinHandleErr := syscall.GetStdHandle(-10)
-	if stdinHandleErr != nil {
-		return "", stdinHandleErr
-	}
-
-	resetFunc, err := makeRaw(stdinHandle)
+	resetFunc, err := makeRaw(handle)
 	if err != nil {
 		return "", err
 	}
-	buffer := i.rawReadline(stdinHandle)
-	resetFunc()
-	return buffer, nil
+	defer resetFunc()
+
+	return i.rawReadline(f)
 }
 
 func makeRaw(console syscall.Handle) (func(), error) {
