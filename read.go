@@ -46,7 +46,8 @@ func (i *UI) read(opts *readOptions) (string, error) {
 				resultErr = fmt.Errorf("failed to read the input: %s", err)
 			}
 
-			resultStr = strings.TrimSuffix(line, LineSep)
+			resultStr = strings.Trim(line, LineSep)
+			resultStr = strings.TrimSuffix(resultStr, "\n")
 		}
 	}()
 
