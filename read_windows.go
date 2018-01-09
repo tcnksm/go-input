@@ -37,7 +37,7 @@ func (i *UI) rawRead(f *os.File) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	buffer := i.rawReadLine(stdinHandle)
+	buffer := i.rawReadline(stdinHandle)
 	resetFunc()
 	return buffer, nil
 }
