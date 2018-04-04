@@ -112,14 +112,14 @@ type Options struct {
 	Hide bool
 
 	// Mask hides user input and will be matched by MaskVal
-	// on the screen. By default, MaskVal is astarisk(*).
+	// on the screen. By default, MaskVal is asterisk(*).
 	Mask bool
 
-	// MaskDefault hides default value. By default, MaskVal is astarisk(*).
+	// MaskDefault hides default value. By default, MaskVal is asterisk(*).
 	MaskDefault bool
 
 	// MaskVal is a value which is used for masking user input.
-	// By default, MaskVal is astarisk(*).
+	// By default, MaskVal is asterisk(*).
 	MaskVal string
 
 	// ValidateFunc is function to do extra validation of user
