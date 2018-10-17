@@ -125,6 +125,9 @@ type Options struct {
 	// ValidateFunc is function to do extra validation of user
 	// input string. By default, it does nothing (just returns nil).
 	ValidateFunc ValidateFunc
+
+	//ErrorString is the text that is reported back when validation fails
+	ErrorString string
 }
 
 // validateFunc returns ValidateFunc. If it's specified by
