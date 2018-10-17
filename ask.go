@@ -74,7 +74,7 @@ func (i *UI) Ask(query string, opts *Options) (string, error) {
 				break
 			}
 
-			fmt.Fprintf(i.Writer, "Failed to validate input string: %s\n\n", err)
+			fmt.Fprintf(i.Writer, "%s%s\n", opts.ErrorString, err)
 			continue
 		}
 
