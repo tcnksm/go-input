@@ -122,6 +122,10 @@ type Options struct {
 	// By default, MaskVal is asterisk(*).
 	MaskVal string
 
+	// ReturnIndex is used to return the index instead of the value when using Select.
+	// By default, ReturnIndex is false.
+	ReturnIndex bool
+
 	// ValidateFunc is function to do extra validation of user
 	// input string. By default, it does nothing (just returns nil).
 	ValidateFunc ValidateFunc

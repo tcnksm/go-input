@@ -130,7 +130,15 @@ func (i *UI) Select(query string, list []string, opts *Options) (string, error) 
 		}
 
 		// Reach here means it gets ideal input.
-		resultStr = list[n-1]
+
+		// Check if the return will be the value or the index.
+		returnIndex := opts.ReturnIndex
+		if !returnIndex {
+			resultStr = list[n-1]
+		} else {
+			resultStr = line
+		}
+
 		break
 	}
 
