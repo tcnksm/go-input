@@ -29,12 +29,44 @@ ui := &input.UI{
     Reader: os.Stdin,
 }
 
-query := "What is your name?"
-name, err := ui.Ask(query, &input.Options{
-    Default: "tcnksm",
-    Required: true,
-    Loop:     true,
+query1 := "What is your name?"
+name, _ := ui.Ask(query1, &input.Options{
+	Default: "tcnksm",
 })
+
+fmt.Println(name)
+
+re, _ := regexp.Compile(`^(\+\d{1,2}\s)?\(?\d{3}\)?[\s.-]\d{3}[\s.-]\d{4}$`)
+query2 := "What is your phone number?"
+number, _ := ui.Ask(query2, &input.Options{
+	Required: true,
+	Loop:     true,
+	ValidateFunc: func(s string) error {
+		if ok := re.Match([]byte(s)); !ok {
+			return errors.New("please enter a valid phone number")
+		}
+		return nil
+	},
+})
+
+fmt.Println(number)
+```
+
+##### Output
+
+```
+What is your name?
+Enter a value (Default is tcnksm): 
+
+tcnksm
+What is your phone number?
+Enter a value: 253
+Failed to validate input string: please enter a valid phone number
+
+
+Enter a value: 253-123-4567
+
+253-123-4567
 ```
 
 You can check other examples in [here](/_example).
