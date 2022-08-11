@@ -1,26 +1,10 @@
-PACKAGES = $(shell go list ./... | grep -v '/vendor/')
+SHELL := /bin/bash
 
-default: test
+test: tools
+	rm -rf test-reports
+	mkdir test-reports
+	go clean -testcache
+	GO111MODULE="off" go test -v 2>&1 ./... | go-junit-report -iocopy -set-exit-code -out test-reports/unit-test-report.xml
 
-test-all: vet lint test test-race
-
-test: 
-	go test -v -parallel=4 ${PACKAGES}
-
-test-race:
-	go test -v -race ${PACKAGES}
-
-vet:
-	go vet ${PACKAGES}
-
-lint:
-	@go get github.com/golang/lint/golint
-	go list ./... | grep -v vendor | xargs -n1 golint 
-
-cover:
-	@go get golang.org/x/tools/cmd/cover		
-	go test -coverprofile=cover.out
-	go tool cover -html cover.out
-	rm cover.out
-
-.PHONY: test test-race vet lint cover	
+tools:
+	go install github.com/jstemmer/go-junit-report/v2@v2.0.0
