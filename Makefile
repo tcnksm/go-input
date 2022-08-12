@@ -8,3 +8,4 @@ test: tools
 
 tools:
 	go install github.com/jstemmer/go-junit-report/v2@v2.0.0
+	GO111MODULE="off" go get golang.org/x/crypto/ssh/terminal
