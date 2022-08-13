@@ -2,12 +2,18 @@ package input
 
 import (
 	"bytes"
+	"fmt"
 	"io"
 	"io/ioutil"
 	"testing"
 )
 
 func TestRead(t *testing.T) {
+	var stringWithSpace = fmt.Sprintf("taichi nakashima%s", LineSep)
+	var expectedWithSpace = "taichi nakashima"
+	var stringNoSpace = fmt.Sprintf("passw0rd%s", LineSep)
+	var expectedNoSpace = "passw0rd"
+
 	cases := []struct {
 		opts      *readOptions
 		userInput io.Reader
@@ -18,8 +24,8 @@ func TestRead(t *testing.T) {
 				mask:    false,
 				maskVal: "",
 			},
-			userInput: bytes.NewBufferString("passw0rd"),
-			expect:    "passw0rd",
+			userInput: bytes.NewBufferString(stringNoSpace),
+			expect:    expectedNoSpace,
 		},
 
 		{
@@ -27,8 +33,8 @@ func TestRead(t *testing.T) {
 				mask:    false,
 				maskVal: "",
 			},
-			userInput: bytes.NewBufferString("taichi nakashima"),
-			expect:    "taichi nakashima",
+			userInput: bytes.NewBufferString(stringWithSpace),
+			expect:    expectedWithSpace,
 		},
 
 		// No good way to test masking...
